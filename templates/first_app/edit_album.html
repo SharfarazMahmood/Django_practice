@@ -5,5 +5,13 @@
     {{edit_form.as_p}}
     {% csrf_token %}
     <input type="submit" name="submit" value="Update" class="btn btn-info btn-sm">
+    {% if success_text %}
+      <div class="alert alert-success">
+        <h5>{{success_text}}</h5>
+      </div>
+    {% endif %}
   </form>
+  <br>
+  <a class="btn btn-danger btn-sm" href="{% url 'first_app:delete_album' album_id=album_id%}" onclick="return confirm('Delete this Album ?')">Delete</a>
+
 {% endblock %}

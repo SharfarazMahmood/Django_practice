@@ -54,24 +54,39 @@ def edit_artist(request, artist_id):
         if form.is_valid():
             form.save(commit=True)
             return album_list(request, artist_id)
-    dict = {'title':"Album list",
-            'edit_form':form,
-            }
     return render(request, 'first_app/edit_artist.html', context=dict)
 
 
 def edit_album(request, album_id):
     album_info = Album.objects.get(pk=album_id)
     form = forms.AlbumForm(instance=album_info)
+    dict = {'title':"Edit Album",
+            'edit_form':form,
+            }
     if request.method == 'POST':
         form = forms.AlbumForm(request.POST, instance=album_info)
         if form.is_valid():
             form.save(commit=True)
-    dict = {'title':"Edit Album",
-            'edit_form':form,
-            }
+            dict.update({'success_text':"Successfully Updated!"})
+    dict.update({'edit_form':form})
+    dict.update({'album_id':album_id})
     return render(request, 'first_app/edit_album.html', context=dict)
 
+def delete_album(request, album_id):
+    album = Album.objects.get(pk=album_id).delete()
+    dict = {'delete_success':"Album Successfully Deleted !"}
+    return render(request, "first_app/delete.html", context=dict)
+
+def delete_artist(request, artist_id):
+    musician = Musician.objects.get(pk=artist_id).delete()
+    dict = {'delete_success':"Musician Successfully Deleted !"}
+    return render(request, "first_app/delete.html", context=dict)
+
+def all_albums(request):
+    all_albums = Album.objects.order_by("name")
+    dict = {'title':"Home Page",
+            'album_list':all_albums}
+    return render(request, 'first_app/all_albums.html', context=dict)
 ### first try
 #
 # def home (request):
