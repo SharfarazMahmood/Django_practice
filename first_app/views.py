@@ -38,8 +38,8 @@ def album_form(request):
 
 def album_list(request, artist_id):
     artist_info = Musician.objects.get(pk=artist_id)
-    album_list = Album.objects.filter(artist=artist_id).order_by('name','release_date')
-    artist_avg_rating = Album.objects.filter(artist=artist_id).aggregate( Avg('num_stars') )
+    album_list = Album.objects.filter(artist_id=artist_id).order_by('name','release_date')
+    artist_avg_rating = Album.objects.filter(artist_id=artist_id).aggregate( Avg('num_stars') )
     dict = {'title':"Album list",
             'artist_info':artist_info,
             'album_list':album_list,
@@ -59,6 +59,18 @@ def edit_artist(request, artist_id):
             }
     return render(request, 'first_app/edit_artist.html', context=dict)
 
+
+def edit_album(request, album_id):
+    album_info = Album.objects.get(pk=album_id)
+    form = forms.AlbumForm(instance=album_info)
+    if request.method == 'POST':
+        form = forms.AlbumForm(request.POST, instance=album_info)
+        if form.is_valid():
+            form.save(commit=True)
+    dict = {'title':"Edit Album",
+            'edit_form':form,
+            }
+    return render(request, 'first_app/edit_album.html', context=dict)
 
 ### first try
 #
