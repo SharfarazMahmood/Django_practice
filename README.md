@@ -7,4 +7,4 @@
 
 ---
 
-This is a music info storing site (obviously a work in progress). 
+This is a music info storing site (learing project). 

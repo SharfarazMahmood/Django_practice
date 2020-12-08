@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.generic import View
+
 from first_app.models import Musician, Album
 from first_app import forms
 ##import modules
@@ -7,12 +10,24 @@ from django.http import HttpResponse
 
 # Create your views here.
 
-## second try
-def index(request):
+## class based views
+class IndexView(View):
+    def get(self, request):
+        musician_list = Musician.objects.order_by("first_name")
+        dict = {'title':"Home Page",
+                'musician_list':musician_list}
+        # return HttpResponse('Hello from a class!! -___-')
+        return render(request, 'first_app/index.html', context=dict)
+
+
+
+## second
+def index_def(request):
     musician_list = Musician.objects.order_by("first_name")
     dict = {'title':"Home Page",
             'musician_list':musician_list}
     return render(request, 'first_app/index.html', context=dict)
+    # return HttpResponse('Hello -__-')
 
 def musician_form(request):
     form = forms.MusicianForm()
