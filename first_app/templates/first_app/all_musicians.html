@@ -1,0 +1,15 @@
+{% extends "first_app/base.html" %}
+{% block body_block %}
+  <h4>All Musicians</h4>
+  <table class="table table-bordared">
+    <tr>
+      <th>Name</th><th>Instrument</th>
+      {% for artist in musician_list %}
+      <tr>
+        <td> <a href="{% url 'first_app:musician_update' pk=artist.pk %}">
+          {{ artist.first_name }} {{artist.last_name}}</a> </td><td>{{ artist.instrument }}</td>
+      </tr>
+      {% endfor %}
+    </tr>
+  </table>
+{% endblock %}

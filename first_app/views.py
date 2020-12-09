@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import View
+from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
 from first_app.models import Musician, Album
 from first_app import forms
@@ -11,14 +12,44 @@ from django.http import HttpResponse
 # Create your views here.
 
 ## class based views
-class IndexView(View):
-    def get(self, request):
-        musician_list = Musician.objects.order_by("first_name")
-        dict = {'title':"Home Page",
-                'musician_list':musician_list}
-        # return HttpResponse('Hello from a class!! -___-')
-        return render(request, 'first_app/index.html', context=dict)
+class IndexView(ListView):
+    context_object_name = 'musician_list'
+    model = Musician
+    template_name = 'first_app/index.html'
 
+class AddMusician(CreateView):
+    fields = ('first_name', 'last_name', 'instrument')
+    model = Musician
+    template_name = 'first_app/musician_form.html'
+
+class MusicianDetail(DetailView):
+    context_object_name = 'musician'
+    model = Musician
+    template_name = 'first_app/musician_detail.html'
+
+class MusicianUpdate(UpdateView):
+    fields = ('first_name', 'last_name', 'instrument')
+    model = Musician
+    template_name = 'first_app/musician_form.html'
+
+class MusicianDelete(DeleteView):
+    context_object_name = 'musician'
+    model = Musician
+    ## important
+    success_url = reverse_lazy('first_app:index')
+    template_name = 'first_app/delete_musician.html'
+
+
+
+## Template view
+# class IndexView(TemplateView):
+#     template_name = 'first_app/index.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['sample_text'] = 'sample_text 1'
+#         context['sample_num'] = 56
+#         return context
 
 
 ## second
@@ -35,7 +66,7 @@ def musician_form(request):
         form = forms.MusicianForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
-            return index(request)
+            return index_def(request)
     dict = {'title':"Add Musician",
             'musician_form':form}
     return render(request, 'first_app/musician_form.html', context=dict)
@@ -60,16 +91,6 @@ def album_list(request, artist_id):
             'album_list':album_list,
             'artist_avg_rating':artist_avg_rating}
     return render(request, 'first_app/album_list.html', context=dict)
-
-def edit_artist(request, artist_id):
-    artist_info = Musician.objects.get(pk=artist_id)
-    form = forms.MusicianForm(instance=artist_info)
-    if request.method == 'POST':
-        form = forms.MusicianForm(request.POST, instance=artist_info)
-        if form.is_valid():
-            form.save(commit=True)
-            return album_list(request, artist_id)
-    return render(request, 'first_app/edit_artist.html', context=dict)
 
 
 def edit_album(request, album_id):
@@ -97,9 +118,15 @@ def delete_artist(request, artist_id):
     dict = {'delete_success':"Musician Successfully Deleted !"}
     return render(request, "first_app/delete.html", context=dict)
 
+def all_musicians(request):
+    all_musicians = Musician.objects.order_by("first_name")
+    dict = {'title':"Musicians",
+            'musician_list':all_musicians}
+    return render(request, 'first_app/all_musicians.html', context=dict)
+
 def all_albums(request):
     all_albums = Album.objects.order_by("name")
-    dict = {'title':"Home Page",
+    dict = {'title':"Albums",
             'album_list':all_albums}
     return render(request, 'first_app/all_albums.html', context=dict)
 ### first try
