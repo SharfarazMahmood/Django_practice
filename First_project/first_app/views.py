@@ -77,7 +77,7 @@ def album_form(request):
         form = forms.AlbumForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
-            return index(request)
+            return index_def(request)
     dict = {'title':"Add Album",
             "album_form":form}
     return render(request, 'first_app/album_form.html', context=dict)
